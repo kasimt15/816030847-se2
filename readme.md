@@ -80,18 +80,123 @@ app.cli.add_command(user_cli) # add the group to the cli
 
 ```
 
+```python
+@user_cli.command("create", help="Creates a user")
+@click.argument("name", default="rob")
+@click.argument("address", default="1440_johnson&johnson_st_hidden_leaf_village")
+def create_user_command(name, address):
+    new_user= create_user(name, address)
+
+    if isinstance(new_user, User):
+        print(f'{name} created!')
+    else:
+        print(new_user)
+
+# this command will be : flask user create bob bobpass
+
+@user_cli.command("list", help="Lists users in the database")
+@click.argument("format", default="string")
+def list_user_command(format):
+    if format == 'string':
+        print(get_all_users())
+    else:
+        print(get_all_users_json())
 Then execute the command invoking with flask cli with command name and the relevant parameters
 
 ```bash
 $ flask user create bob bobpass
 ```
+```python
+@competition_cli.command("create", help= "create a competition")
+@click.argument("name", default= "code4runners")
+@click.argument("venue", default= "online")
+@click.argument("date", default= "2024-09-27")
+@click.argument("start_time", default= "09:00:00")
+@click.argument("end_time", default= "13:00:00")
+@click.argument("participant", default= 0)
+def create_competition_command(name, venue, date, start_time, end_time, participant):
+    startTime= datetime.strptime(start_time, "%H:%M:%S").time()
+    endTime= datetime.strptime(end_time, "%H:%M:%S").time()
+    
+    create_competition(name, venue, date, startTime, endTime, participant)
+    print(f"{name} was created!")
 
+@competition_cli.command("list", help="Lists competitions in the database")
+@click.argument("format", default="string")
+def list_competition_command(format):
+    if format == 'string':
+        print(get_all_competitions())
+    else:
+        print(get_all_competitions_json())
+
+
+```
 
 # Running the Project
 
 _For development run the serve command (what you execute):_
 ```bash
+# Run the Flask application
 $ flask run
+
+# User Commands
+# Create a user with default values
+$ flask user create bob "1234 Elm Street"
+
+# List all users in string format
+$ flask user list
+
+# List all users in JSON format
+$ flask user list json
+
+# Coordinator Commands
+# Create a coordinator with default values
+$ flask coordination create_user
+
+# Create a coordinator with custom values
+$ flask coordination create_user "Alice" "123 Wonderland Ave"
+
+# List all coordinators in string format
+$ flask coordination list_users
+
+# List all coordinators in JSON format
+$ flask coordination list_users json
+
+# Coordination Commands
+# Create a coordination relationship with default IDs
+$ flask coordination create
+
+# Create a coordination relationship with custom IDs
+$ flask coordination create 1 2
+
+# List all coordinations in string format
+$ flask coordination list
+
+# List all coordinations in JSON format
+$ flask coordination list json
+
+# Competition Commands
+# Create a competition
+$ flask competition create "New Competition" "Stadium" "2024-10-01" "10:00:00" "14:00:00" 5
+
+# List all competitions in string format
+$ flask competition list
+
+# List all competitions in JSON format
+$ flask competition list json
+
+# Participant Commands
+# Create a participation relationship
+$ flask participant create 1 1
+
+# List all participations in string format
+$ flask participant list
+
+# List all participations in JSON format
+$ flask participant list json
+
+# Delete a participation relationship
+$ flask participant delete 1 1
 ```
 
 _For production using gunicorn (what the production server executes):_
